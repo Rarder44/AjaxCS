@@ -32,7 +32,7 @@
 
 
 
-
+            var index=0;
 
             function Start()
             {
@@ -46,14 +46,28 @@
 
                 });
                 
-
-
+                window.AjaxCS.createCyclicalSend("comando",{data:"ciclo"},function(data,message){
+                    console.log(index++);
+                    console.log(data);
+                    console.log(message);
+                },200,"ciclo1");
             }
 
+
+            function StartCiclo()
+            {
+                window.AjaxCS.StartCyclical("ciclo1");
+            }
+            function StopCiclo()
+            {
+                window.AjaxCS.StopCyclical("ciclo1");
+            }
         </script>
         <script src="AjaxCS.js"></script>
     </head>
     <body>
-        
+        <button onclick="StartCiclo()">Start</button>
+        <button onclick="StopCiclo()">Stop</button>
+
     </body>
 </html>

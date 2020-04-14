@@ -118,11 +118,95 @@
 
 
         //TODO:
-        Cyclical={};    //ID:"ID del ciclo di invio",Function: "funzione associata al ciclo",IntervalID:"Id dell'intervallo nel caso il ciclo sia in esecuzione"
+        Cyclical=[];    //ID:"ID del ciclo di invio",command: "comando da invare",data:"dati da inviare",callback:"funzione di callback",time:"tempo dell'intervallo",intervalID:"Id dell'intervallo nel caso il ciclo sia in esecuzione"
+
         //createCiclicalSend (Command,data,callback,time,CustomID=null ) -> se il custom ID non viene passato, viene creato uno in automatico
-        //StartCyclical (CyclicalID)
-        //StopCyclical (CyclicalID)
-        //StopAllCyclical
+        createCyclicalSend (Command,data,callback,time,CustomID=null ){
+
+            if(this.GetCyclicalSendByID(CustomID)!=null)
+                return CustomID;
+            
+            var tmp={};
+
+            //genero l'ID o uso quello che mi è stato passato
+            if(CustomID==null)
+            {
+                var ID;
+                do
+                {
+                    ID= new Date().getTime();
+                }
+                while(this.GetCyclicalSendByID(ID)!=null);
+                tmp["ID"]=ID;
+            }
+            else
+            {
+                tmp["ID"]=CustomID;
+            }
+
+            tmp["time"]=time;
+            tmp["command"]=Command;
+            tmp["data"]=data;
+            tmp["callback"]=callback;
+            tmp["intervalID"]=null;
+            this.Cyclical.push(tmp); 
+            return   tmp["ID"];      
+        }
+        deleteCyclicalSend (ID){
+            var j=-1;
+            for(var i=0;i<this.Cyclical.length;i++)
+            {
+                if(this.Cyclical[i].ID==ID)
+                {
+                    j=i;
+                    break;
+                }
+            }
+            if(j!=-1)
+                this.Cyclical.splice(j,1);
+        }
+        GetCyclicalSendByID(ID)
+        {
+            for(var i=0;i<this.Cyclical.length;i++)
+            {
+                if(this.Cyclical[i].ID==ID)
+                {
+                    return this.Cyclical[i];
+                }
+            }
+            return null;
+        }
+
+        StartCyclical (CyclicalID)
+        {
+            var cycl=this.GetCyclicalSendByID(CyclicalID);
+            if(cycl==null)
+                return;
+            
+            if(cycl["intervalID"]!=null)    //è già in esecuzione
+                return;
+            
+            var _this=this;
+            cycl["intervalID"] = setInterval(function(){ 
+                _this.Send(cycl["command"],cycl["data"],cycl["callback"]);
+            }, cycl["time"]);
+        }
+        StopCyclical (CyclicalID)
+        {
+            var cycl=this.GetCyclicalSendByID(CyclicalID);
+            if(cycl==null)
+                return;
+            if(cycl["intervalID"]==null)    //non è in esecuzione
+                return;
+
+            clearInterval(cycl["intervalID"]);
+            cycl["intervalID"] = null;
+        }
+        StopAllCyclical()
+        {
+            for(var i=0;i<this.Cyclical.length;i++)
+                this.StopCyclical(this.Cyclical[i].ID);  
+        }
     }
     
 
