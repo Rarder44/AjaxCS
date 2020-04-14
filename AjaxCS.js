@@ -115,6 +115,14 @@
             });
         }
 
+
+
+        //TODO:
+        Cyclical={};    //ID:"ID del ciclo di invio",Function: "funzione associata al ciclo",IntervalID:"Id dell'intervallo nel caso il ciclo sia in esecuzione"
+        //createCiclicalSend (Command,data,callback,time,CustomID=null ) -> se il custom ID non viene passato, viene creato uno in automatico
+        //StartCyclical (CyclicalID)
+        //StopCyclical (CyclicalID)
+        //StopAllCyclical
     }
     
 
