@@ -117,8 +117,8 @@
                     json = JSON.parse(data);
                 } catch(e) {
                    //errore nel parse del json
-                   callback(null,"JSON parse error");
                    console.log(data);
+                   callback(null,"JSON parse error");
                    return;
                 }
 				if(typeof json["data"] === 'undefined' || typeof json["message"] === 'undefined') {
@@ -133,7 +133,6 @@
 
 
 
-        //TODO:
         Cyclical=[];    //ID:"ID del ciclo di invio",command: "comando da invare",data:"dati da inviare",callback:"funzione di callback",time:"tempo dell'intervallo",intervalID:"Id dell'intervallo nel caso il ciclo sia in esecuzione"
 
         //createCiclicalSend (Command,data,callback,time,CustomID=null ) -> se il custom ID non viene passato, viene creato uno in automatico
