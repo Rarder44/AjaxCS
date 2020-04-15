@@ -7,6 +7,8 @@
 
 
 //Usare la funzione RET per ritornare un valore/messaggio alla pagina ( questa funzione blocca l'esecuzione della pagina)
+//INIZIO SPAZIO PER LE INCLUSIONI 
+//FINE SPAZIO PER LE INCLUSIONI
 $Commands=array();
 
 

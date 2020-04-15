@@ -43,13 +43,13 @@
                     }
                 }
             }       
-            console.log("Setting path: "+this.SettingPath);
+            //console.log("Setting path: "+this.SettingPath);
             
             
             this.LoadSetting(function(data)
             {
                 _this.Settings=data;
-                console.log(_this.Settings);
+                //console.log(_this.Settings);
                 _this.FireLoadedTrigger();
             });
 
@@ -101,6 +101,15 @@
                 return;
             }
 
+            if( typeof callback === 'undefined' || callback==null)
+            {
+                callback=function(data,message){
+                    //foo
+                    //per evitare errori...
+                    //console.log(data);
+                    //console.log(message);
+                };
+            }
             CallFunction(this.Settings.PHP_url,{command:Command,data:data},function(data)
             {
                 var json;
@@ -109,9 +118,16 @@
                 } catch(e) {
                    //errore nel parse del json
                    callback(null,"JSON parse error");
+                   console.log(data);
                    return;
                 }
-                callback(json,"OK");
+				if(typeof json["data"] === 'undefined' || typeof json["message"] === 'undefined') {
+					//malformed data
+					callback(json,"Malformed return data");
+					return
+				}
+				
+                callback(json["data"],json["message"]);
             });
         }
 
@@ -177,6 +193,15 @@
             return null;
         }
 
+        //permette di inviare in maniera istantanea e per SOLO una volta  una richiesta memorizzata nelle cicliche
+        InstantCyclical(CyclicalID)
+        {
+            var cycl=this.GetCyclicalSendByID(CyclicalID);
+            if(cycl==null)
+                return;
+
+            this.Send(cycl["command"],cycl["data"],cycl["callback"]);
+        }
         StartCyclical (CyclicalID)
         {
             var cycl=this.GetCyclicalSendByID(CyclicalID);
@@ -187,6 +212,7 @@
                 return;
             
             var _this=this;
+            _this.Send(cycl["command"],cycl["data"],cycl["callback"]);
             cycl["intervalID"] = setInterval(function(){ 
                 _this.Send(cycl["command"],cycl["data"],cycl["callback"]);
             }, cycl["time"]);
